@@ -1,0 +1,64 @@
+import 'package:dartz/dartz.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:social_app/core/others/string_generator.dart';
+import 'package:social_app/modules/auth/domain/entities/signin_entity.dart';
+import 'package:social_app/core/entities/user_entity.dart';
+import 'package:social_app/modules/auth/domain/repositories/signin_repository.dart';
+import 'package:social_app/modules/auth/domain/usecases/signin_usecase/signin_usecase.dart';
+import 'package:social_app/modules/auth/domain/usecases/signin_usecase/signin_usecase_imp.dart';
+
+class SigninRepositoryMock extends Mock implements SigninRepository {}
+
+void main() {
+  SigninRepository repository = SigninRepositoryMock();
+  SigninUsecase usecase = SigninUsecaseImp(repository);
+
+  test('Should return an UserEntity', () async {
+    final signIn = SigninEntity(
+      email: 'tiago@gmail.com',
+      password: '123456',
+    );
+
+    final data = UserEntity(
+      uid: StringGenerator.generateRandomString(16),
+      name: StringGenerator.generateRandomString(6),
+      username: StringGenerator.generateRandomString(6),
+      email: signIn.email,
+      image: 'image',
+      createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
+    );
+
+    when(() => repository(signIn)).thenAnswer((_) async => Right(data));
+
+    var result = await usecase(signIn);
+
+    expect(result, isNotNull);
+    expect(result.isRight(), equals(true));
+    expect(result.fold((l) => null, (r) => r), isA<UserEntity>());
+  });
+
+  test('Should return an Exception', () async {
+    final signIn = SigninEntity(
+      email: 'tiagogmail.com',
+      password: '123456',
+    );
+
+    final data = UserEntity(
+      uid: StringGenerator.generateRandomString(16),
+      name: StringGenerator.generateRandomString(6),
+      username: StringGenerator.generateRandomString(6),
+      email: signIn.email,
+      image: 'image',
+      createdAt: DateTime.now().toUtc().millisecondsSinceEpoch,
+    );
+
+    when(() => repository(signIn)).thenAnswer((_) async => Right(data));
+
+    var result = await usecase(signIn);
+
+    expect(result, isNotNull);
+    expect(result.isLeft(), equals(true));
+    expect(result.fold((l) => l, (r) => null), isException);
+  });
+}

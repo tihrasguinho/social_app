@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Social App Dev",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/app_main_dev.dart",
+            "args": [
+                "--flavor",
+                "dev"
+            ]
+        },
+        {
+            "name": "Social App Prod",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/app_main_prod.dart",
+            "args": [
+                "--flavor",
+                "prod"
+            ]
+        }
+    ]
+}
